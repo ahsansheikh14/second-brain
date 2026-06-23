@@ -14,6 +14,8 @@ app.use(express.json())
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'))
 
+app.use('/api/documents', require('./routes/documentRoutes'))
+
 // Health check
 app.get('/', (req, res) => {
   res.json({ message: 'Second Brain API running' })
