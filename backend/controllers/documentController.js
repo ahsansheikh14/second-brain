@@ -1,5 +1,5 @@
 const Document = require('../models/Document')
-const pdfParse = require('pdf-parse')
+const pdfParse = require('pdf-parse/lib/pdf-parse.js')
 const cheerio = require('cheerio')
 const axios = require('axios')
 
