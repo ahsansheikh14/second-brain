@@ -118,7 +118,8 @@ const addNote = async (req, res) => {
       rawText: cleanText(content)
     })
     // Trigger embedding in background — don't wait for it
-embedAndStore(document._id.toString(), req.user._id.toString(), rawText)
+embedAndStore(document._id.toString(), req.user._id.toString(), cleanText(content))
+
   .catch(err => console.error('Background embedding failed:', err))
 
 
@@ -137,7 +138,7 @@ const getDocuments = async (req, res) => {
       .select('-rawText')     // don't send full text — too heavy
       .sort({ createdAt: -1 })
       // Trigger embedding in background — don't wait for it
-embedAndStore(document._id.toString(), req.user._id.toString(), rawText)
+
   .catch(err => console.error('Background embedding failed:', err))
 
 

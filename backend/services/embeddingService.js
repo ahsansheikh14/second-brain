@@ -15,11 +15,10 @@ const splitText = async (text) => {
 
 // Convert text to vector using Gemini
 const generateEmbedding = async (text) => {
-  const model = genAI.getGenerativeModel({ model: 'text-embedding-004' })
+  const model = genAI.getGenerativeModel({ model: 'embedding-001' })
   const result = await model.embedContent(text)
   return result.embedding.values
 }
-
 // Main function — takes rawText, splits, embeds, stores in Supabase
 const embedAndStore = async (documentId, userId, rawText) => {
   try {
