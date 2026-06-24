@@ -1,3 +1,4 @@
+const { embedAndStore, deleteChunks } = require('../services/embeddingService')
 const Document = require('../models/Document')
 const pdfParse = require('pdf-parse/lib/pdf-parse.js')
 const cheerio = require('cheerio')
@@ -34,6 +35,10 @@ const uploadPDF = async (req, res) => {
       type: 'pdf',
       rawText
     })
+    // Trigger embedding in background — don't wait for it
+embedAndStore(document._id.toString(), req.user._id.toString(), rawText)
+  .catch(err => console.error('Background embedding failed:', err))
+
 
     res.status(201).json(document)
 
@@ -82,6 +87,10 @@ const addURL = async (req, res) => {
       sourceUrl: url,
       rawText
     })
+    // Trigger embedding in background — don't wait for it
+embedAndStore(document._id.toString(), req.user._id.toString(), rawText)
+  .catch(err => console.error('Background embedding failed:', err))
+
 
     res.status(201).json(document)
 
@@ -108,6 +117,10 @@ const addNote = async (req, res) => {
       type: 'note',
       rawText: cleanText(content)
     })
+    // Trigger embedding in background — don't wait for it
+embedAndStore(document._id.toString(), req.user._id.toString(), rawText)
+  .catch(err => console.error('Background embedding failed:', err))
+
 
     res.status(201).json(document)
 
@@ -123,6 +136,10 @@ const getDocuments = async (req, res) => {
     const documents = await Document.find({ user: req.user._id })
       .select('-rawText')     // don't send full text — too heavy
       .sort({ createdAt: -1 })
+      // Trigger embedding in background — don't wait for it
+embedAndStore(document._id.toString(), req.user._id.toString(), rawText)
+  .catch(err => console.error('Background embedding failed:', err))
+
 
     res.json(documents)
 
@@ -146,6 +163,7 @@ const deleteDocument = async (req, res) => {
     }
 
     await document.deleteOne()
+    await deleteChunks(req.params.id)
     res.json({ message: 'Document deleted' })
 
   } catch (error) {
