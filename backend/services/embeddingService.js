@@ -15,7 +15,7 @@ const splitText = async (text) => {
 
 // Convert text to vector using Gemini
 const generateEmbedding = async (text) => {
-  const model = genAI.getGenerativeModel({ model: 'embedding-001' })
+  const model = genAI.getGenerativeModel({ model: 'gemini-embedding-001' })
   const result = await model.embedContent(text)
   return result.embedding.values
 }
@@ -30,12 +30,18 @@ const embedAndStore = async (documentId, userId, rawText) => {
     const embedPromises = chunks.map(async (chunk) => {
       const embedding = await generateEmbedding(chunk.pageContent)
 
-      return supabase.from('document_chunks').insert({
-        document_id: documentId,
-        user_id: userId,
-        content: chunk.pageContent,
-        embedding
-      })
+   const { data, error } = await supabase.from('document_chunks').insert({
+  document_id: documentId,
+  user_id: userId,
+  content: chunk.pageContent,
+  embedding
+})
+
+if (error) {
+  console.error('Supabase insert error:', error)
+} else {
+  console.log('Chunk saved to Supabase successfully')
+}
     })
 
     await Promise.all(embedPromises)
