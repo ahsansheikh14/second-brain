@@ -13,8 +13,8 @@ app.use(express.json())
 
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'))
-
 app.use('/api/documents', require('./routes/documentRoutes'))
+app.use('/api/chat', require('./routes/chatRoutes'))
 
 // Health check
 app.get('/', (req, res) => {

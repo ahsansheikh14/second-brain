@@ -58,14 +58,19 @@ const searchSimilarChunks = async (query, userId, matchCount = 5) => {
   // Convert query to vector
   const queryEmbedding = await generateEmbedding(query)
 
-  // Search Supabase for similar chunks
+  // Search Supabase
   const { data, error } = await supabase.rpc('match_chunks', {
     query_embedding: queryEmbedding,
     match_user_id: userId,
     match_count: matchCount
   })
 
-  if (error) throw error
+  if (error) {
+    console.error('Supabase search error:', error)
+    throw error
+  }
+
+  console.log(`Found ${data.length} relevant chunks`)
   return data
 }
 
